@@ -1,135 +1,224 @@
-# Turborepo starter
+# Turborepo Starter Template
 
-This Turborepo starter is maintained by the Turborepo core team.
+A production-ready monorepo template with Next.js, tRPC, Drizzle ORM, and NextAuth.
 
-## Using this example
+## Stack
 
-Run the following command:
+- **Framework**: Next.js 16 (App Router, React 19)
+- **API**: tRPC v11 with React Query
+- **Database**: Drizzle ORM + SQLite/Turso
+- **Auth**: NextAuth v5 (GitHub OAuth)
+- **UI**: Tailwind CSS + Shadcn components
+- **Monorepo**: Turborepo with npm workspaces
 
-```sh
-npx create-turbo@latest
-```
-
-## What's inside?
-
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
+## Project Structure
 
 ```
-cd my-turborepo
+apps/
+├── web/              → Main Next.js application (port 3000)
+├── docs/             → Documentation site (port 3001)
+└── slides/           → Slidev presentation (port 3002)
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+packages/
+├── api/              → tRPC routers, procedures, validators
+├── auth/             → NextAuth configuration and helpers
+├── db/               → Drizzle schema, relations, migrations
+├── trpc-client/      → Reusable tRPC client utilities
+├── ui/               → Shadcn components + Tailwind config
+├── eslint-config/    → Shared ESLint configuration
+└── typescript-config/→ Shared TypeScript configuration
 ```
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+## Web App Architecture
+
+The web app follows clean architecture principles with feature-based organization:
 
 ```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
+apps/web/
+├── app/                    # Next.js App Router
+│   ├── (protected)/        # Auth-required routes
+│   └── (public)/           # Public routes
+├── components/
+│   ├── features/           # Feature-specific components
+│   │   └── todos/          # Example: Todo feature
+│   │       ├── TodoApp.tsx
+│   │       ├── TodoForm.tsx
+│   │       ├── TodoItem.tsx
+│   │       └── TodoList.tsx
+│   └── layout/             # Shared layout components
+│       └── UserNav.tsx
+├── hooks/                  # Custom React hooks
+│   └── use-todos.ts        # Data fetching + mutations
+├── lib/                    # Utilities & constants
+│   └── constants.ts        # App-wide constants
+└── types/                  # TypeScript declarations
 ```
 
-### Develop
+### Key Patterns
 
-To develop all apps and packages, run the following command:
+- **Route Groups**: `(protected)` and `(public)` for auth separation
+- **Feature Components**: Organized by domain in `components/features/`
+- **Custom Hooks**: Encapsulate tRPC queries and mutations with optimistic updates
+- **Centralized Constants**: No magic strings, all routes and config in `lib/constants.ts`
 
-```
-cd my-turborepo
+## Quick Start
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
+### 1. Install dependencies
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
+```bash
+npm install
 ```
 
-### Remote Caching
+### 2. Configure environment variables
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
+```bash
+cp .env.example .env
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+Edit `.env` with your values:
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+```bash
+# Database - use absolute path for local SQLite
+DATABASE_URL="file:/Users/yourname/path/to/project/packages/db/sqlite.db"
 
+# Auth - generate with: openssl rand -base64 32
+AUTH_SECRET="your-secret-here"
+
+# GitHub OAuth - create at https://github.com/settings/developers
+# Callback URL: http://localhost:3000/api/auth/callback/github
+AUTH_GITHUB_ID="your-client-id"
+AUTH_GITHUB_SECRET="your-client-secret"
 ```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
+### 3. Push database schema
+
+```bash
+npm run db:push -w @repo/db
 ```
 
-## Useful Links
+### 4. Start development
 
-Learn more about the power of Turborepo:
+```bash
+npm run dev
+```
 
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+| Port | App |
+|------|-----|
+| 3000 | Web app |
+| 3001 | Documentation |
+| 3002 | Slides |
+
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start all apps in development mode |
+| `npm run build` | Build all apps and packages |
+| `npm run lint` | Lint all packages |
+| `npm run check-types` | Type-check all packages |
+| `npm run db:push -w @repo/db` | Push schema to database |
+| `npm run db:studio -w @repo/db` | Open Drizzle Studio |
+
+## Using as a Template
+
+### Creating a new app
+
+1. Copy this repo
+2. Update `package.json` name fields
+3. Configure `.env`
+4. Push database schema
+5. Start building
+
+### Adding a new feature
+
+1. Create feature folder: `components/features/your-feature/`
+2. Create components: `YourFeature.tsx`, `YourFeatureForm.tsx`, `YourFeatureItem.tsx`
+3. Create barrel export: `index.ts`
+4. Create hook (optional): `hooks/use-your-feature.ts`
+5. Add route: `app/(protected)/your-feature/page.tsx`
+
+### Adding a new package
+
+```bash
+mkdir packages/your-package
+cd packages/your-package
+npm init -y
+```
+
+Update the package.json:
+```json
+{
+  "name": "@repo/your-package",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}
+```
+
+### Adding a new tRPC router
+
+1. Create validator in `packages/api/src/validators/`
+2. Create router in `packages/api/src/routers/`
+3. Add to root router in `packages/api/src/root.ts`
+
+### Adding a new database table
+
+1. Create schema in `packages/db/src/schema/`
+2. Export from `packages/db/src/schema/index.ts`
+3. Add relations in `packages/db/src/relations/`
+4. Run `npm run db:push -w @repo/db`
+
+## Package Exports
+
+### @repo/db
+
+```typescript
+import { db, todos, users } from "@repo/db";
+import { Todo, NewTodo } from "@repo/db/schema";
+```
+
+### @repo/api
+
+```typescript
+import { appRouter, type AppRouter } from "@repo/api";
+import { TRPCProvider } from "@repo/api/client";
+import { createContext } from "@repo/api/context";
+```
+
+### @repo/auth
+
+```typescript
+import { auth, getSession, requireAuth, requireGuest } from "@repo/auth";
+```
+
+### @repo/trpc-client
+
+```typescript
+import { createTRPCReactClient } from "@repo/trpc-client/react";
+import { createListCache } from "@repo/trpc-client/optimistic";
+```
+
+### @repo/ui
+
+```typescript
+import { Button } from "@repo/ui/button";
+import { Input } from "@repo/ui/input";
+```
+
+## Production Deployment
+
+### Database (Turso)
+
+1. Create a Turso database at https://turso.tech
+2. Update `DATABASE_URL` to your Turso URL with auth token
+
+### Vercel
+
+1. Connect your repo to Vercel
+2. Set root directory to `apps/web`
+3. Add environment variables
+4. Deploy
+
+## License
+
+MIT

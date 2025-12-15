@@ -1,7 +1,7 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "ui": "tui",
-  "globalEnv": ["DATABASE_URL"],
+  "globalEnv": ["DATABASE_URL", "AUTH_SECRET", "AUTH_GITHUB_ID", "AUTH_GITHUB_SECRET"],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
