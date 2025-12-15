@@ -1,0 +1,27 @@
+{
+  "name": "@repo/api",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc"
+  },
+  "exports": {
+    ".": "./src/root.ts",
+    "./schemas": "./src/schemas/todo.ts",
+    "./*": "./src/*.ts"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "*",
+    "typescript": "latest"
+  },
+  "dependencies": {
+    "@repo/db": "*",
+    "@tanstack/react-query": "^5.90.12",
+    "@trpc/client": "^11.0.0",
+    "@trpc/next": "^11.0.0",
+    "@trpc/react-query": "^11.0.0",
+    "@trpc/server": "^11.0.0",
+    "zod": "^3.24.1"
+  }
+}
