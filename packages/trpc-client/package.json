@@ -1,0 +1,28 @@
+{
+  "name": "@repo/trpc-client",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./react": "./src/react.tsx",
+    "./handler": "./src/handler.ts",
+    "./optimistic": "./src/optimistic.ts"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.90.12",
+    "@trpc/client": "^11.0.0",
+    "@trpc/react-query": "^11.0.0",
+    "@trpc/server": "^11.0.0"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "*",
+    "typescript": "latest"
+  }
+}
