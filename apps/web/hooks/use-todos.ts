@@ -1,6 +1,6 @@
+import { trpc } from "@repo/api/client";
+import { createListCache } from "@repo/trpc-client/optimistic";
 import { toast } from "@repo/ui/sonner";
-import { trpc } from "../components/providers/trpc";
-import { createListCache } from "../utils/optimistic";
 
 export function useTodos() {
   const cache = createListCache(trpc.useUtils().todo.getAll);
@@ -8,7 +8,8 @@ export function useTodos() {
 
   const createTodo = trpc.todo.create.useMutation(
     cache.withOptimistic(({ add }) => ({
-      action: (input) => add({ ...input, completed: false, createdAt: new Date().toISOString() }),
+      // userId is placeholder - server will use actual userId from session
+      action: (input) => add({ ...input, completed: false, createdAt: new Date().toISOString(), userId: "" }),
       onError: (err) => toast.error("Failed to create todo", { description: err.message }),
     }))
   );

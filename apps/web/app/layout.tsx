@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import Link from "next/link";
 import { Toaster } from "@repo/ui/sonner";
-import { TRPCReactProvider } from "../components/providers/trpc";
+import { TRPCProvider } from "@repo/api/client";
+import { UserNav } from "@/components/layout";
+import { APP_NAME, APP_DESCRIPTION, ROUTES } from "@/lib/constants";
 import "./globals.css";
 
 const geistSans = localFont({
@@ -14,8 +17,8 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Todo App",
-  description: "A simple todo app built with Next.js, tRPC, and Drizzle",
+  title: APP_NAME,
+  description: APP_DESCRIPTION,
 };
 
 export default function RootLayout({
@@ -24,9 +27,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+    <html lang="en" className="h-full">
+      <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased h-full flex flex-col`}>
+        <TRPCProvider>
+          <header className="border-b shrink-0">
+            <div className="container mx-auto flex h-16 items-center justify-between px-4">
+              <Link href={ROUTES.HOME} className="text-lg font-semibold">
+                {APP_NAME}
+              </Link>
+              <UserNav />
+            </div>
+          </header>
+          <div className="flex-1 flex flex-col">{children}</div>
+        </TRPCProvider>
         <Toaster />
       </body>
     </html>

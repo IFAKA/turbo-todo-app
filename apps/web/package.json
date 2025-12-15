@@ -13,6 +13,8 @@
   "dependencies": {
     "@repo/ui": "*",
     "@repo/api": "*",
+    "@repo/auth": "*",
+    "@repo/trpc-client": "*",
     "@repo/db": "*",
     "@hookform/resolvers": "^3.9.1",
     "lucide-react": "^0.469.0",

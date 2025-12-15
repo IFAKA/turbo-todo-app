@@ -1,14 +1,8 @@
-import { appRouter } from "@repo/api";
-import { createContext } from "@repo/api/context";
-import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
+import { createAppHandler } from "@repo/api/handler";
+import { auth } from "@repo/auth";
 
-function handler(req: Request) {
-  return fetchRequestHandler({
-    endpoint: "/api/trpc",
-    req,
-    router: appRouter,
-    createContext,
-  });
-}
+const handler = createAppHandler({
+  getSession: auth,
+});
 
-export { handler as GET, handler as POST };
+export const { GET, POST } = handler;
