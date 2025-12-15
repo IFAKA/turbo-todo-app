@@ -2,23 +2,24 @@
   "name": "@repo/db",
   "type": "module",
   "scripts": {
-    "dev": "tsc --watch",
+    "dev": "tsc --watch & drizzle-kit studio",
     "build": "tsc",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio"
   },
   "exports": {
     ".": "./src/index.ts",
-    "./schema": "./src/schema.ts"
+    "./schema": "./src/schema/index.ts",
+    "./relations": "./src/relations/index.ts"
   },
   "dependencies": {
-    "drizzle-orm": "^0.38.3",
-    "@libsql/client": "^0.14.0"
+    "@libsql/client": "^0.14.0",
+    "drizzle-orm": "^0.38.3"
   },
   "devDependencies": {
     "@repo/typescript-config": "*",
     "dotenv": "^16.4.7",
-    "drizzle-kit": "^0.30.1",
+    "drizzle-kit": "^0.31.8",
     "typescript": "latest"
   }
 }
