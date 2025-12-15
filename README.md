@@ -118,6 +118,7 @@ npm run dev
 | `npm run check-types` | Type-check all packages |
 | `npm run db:push -w @repo/db` | Push schema to database |
 | `npm run db:studio -w @repo/db` | Open Drizzle Studio |
+| `npm run dev -w slides` | Open slides presentation |
 
 ## Using as a Template
 
