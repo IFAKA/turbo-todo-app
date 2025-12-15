@@ -1,11 +1,32 @@
 import { db } from "@repo/db";
-import { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
+import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 
-export async function createContext(opts?: FetchCreateContextFnOptions) {
+// Session type from NextAuth
+export type Session = {
+  user: {
+    id: string;
+    name?: string | null;
+    email?: string | null;
+    image?: string | null;
+  };
+  expires: string;
+} | null;
+
+export type GetSessionFn = () => Promise<Session>;
+
+export type CreateContextOptions = {
+  getSession?: GetSessionFn;
+};
+
+export async function createContext(
+  opts?: FetchCreateContextFnOptions,
+  contextOpts?: CreateContextOptions
+) {
+  const session = contextOpts?.getSession ? await contextOpts.getSession() : null;
+
   return {
     db,
-    // Add your context here
-    // session: await getSession(opts.req, opts.res),
+    session,
   };
 }
 
