@@ -9,10 +9,8 @@
   "exports": {
     ".": "./src/root.ts",
     "./client": "./src/client.tsx",
-    "./context": "./src/context.ts",
     "./handler": "./src/handler.ts",
-    "./validators": "./src/validators/index.ts",
-    "./*": "./src/*.ts"
+    "./validators": "./src/validators/index.ts"
   },
   "devDependencies": {
     "@repo/typescript-config": "*",

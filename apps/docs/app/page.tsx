@@ -6,9 +6,9 @@ export default function DocsHome() {
       <div className="max-w-4xl mx-auto px-6 py-12">
         {/* Header */}
         <header className="mb-12">
-          <h1 className="text-4xl font-bold mb-4">Todo App</h1>
+          <h1 className="text-4xl font-bold mb-4">Turborepo Starter Template</h1>
           <p className="text-xl text-muted-foreground">
-            A full-stack TypeScript monorepo built with Next.js, tRPC, and Drizzle ORM.
+            A production-ready monorepo with Next.js, tRPC, Drizzle ORM, and NextAuth.
           </p>
         </header>
 
@@ -17,17 +17,16 @@ export default function DocsHome() {
           <h2 className="text-2xl font-semibold mb-4">Quick Start</h2>
           <Card className="p-4 bg-muted/50">
             <pre className="text-sm overflow-x-auto">
-              <code>{`# Install dependencies
-npm install
+              <code>{`# Automated setup (recommended)
+npm run setup
 
-# Push database schema
-npm run db:push
-
-# Start development servers
+# Add GitHub OAuth credentials to .env
+# Then start development
 npm run dev
 
 # Open the app at http://localhost:3000
-# Open docs at http://localhost:3001`}</code>
+# Open docs at http://localhost:3001
+# Open slides at http://localhost:3002`}</code>
             </pre>
           </Card>
         </section>
@@ -48,10 +47,10 @@ npm run dev
             <Card className="p-4">
               <h3 className="font-semibold mb-2">Backend</h3>
               <ul className="text-sm text-muted-foreground space-y-1">
-                <li>tRPC (Type-safe API)</li>
+                <li>tRPC v11 (Type-safe API)</li>
                 <li>Drizzle ORM</li>
-                <li>SQLite Database</li>
-                <li>Zod Validation</li>
+                <li>NextAuth v5 (Authentication)</li>
+                <li>SQLite/Turso Database</li>
               </ul>
             </Card>
             <Card className="p-4">
@@ -78,14 +77,17 @@ npm run dev
           <h2 className="text-2xl font-semibold mb-4">Project Structure</h2>
           <Card className="p-4 bg-muted/50">
             <pre className="text-sm overflow-x-auto">
-              <code>{`todo-app/
+              <code>{`project/
 ├── apps/
-│   ├── web/          # Main todo application (port 3000)
-│   └── docs/         # Documentation site (port 3001)
+│   ├── web/          # Main application (port 3000)
+│   ├── docs/         # Documentation site (port 3001)
+│   └── slides/       # Slidev presentation (port 3002)
 │
 └── packages/
     ├── api/          # tRPC router & procedures
+    ├── auth/         # NextAuth configuration
     ├── db/           # Drizzle ORM & schema
+    ├── trpc-client/  # Reusable tRPC client utilities
     ├── ui/           # Shared React components
     ├── typescript-config/
     └── eslint-config/`}</code>
@@ -100,19 +102,31 @@ npm run dev
             <Card className="p-4">
               <h3 className="font-semibold">@repo/api</h3>
               <p className="text-sm text-muted-foreground mt-1">
-                tRPC router with todo procedures: <code className="bg-muted px-1 rounded">getAll</code>, <code className="bg-muted px-1 rounded">create</code>, <code className="bg-muted px-1 rounded">toggle</code>, <code className="bg-muted px-1 rounded">delete</code>
+                tRPC router with example todo procedures: <code className="bg-muted px-1 rounded">getAll</code>, <code className="bg-muted px-1 rounded">create</code>, <code className="bg-muted px-1 rounded">toggle</code>, <code className="bg-muted px-1 rounded">delete</code>
+              </p>
+            </Card>
+            <Card className="p-4">
+              <h3 className="font-semibold">@repo/auth</h3>
+              <p className="text-sm text-muted-foreground mt-1">
+                NextAuth v5 config with helpers: <code className="bg-muted px-1 rounded">auth</code>, <code className="bg-muted px-1 rounded">getSession</code>, <code className="bg-muted px-1 rounded">requireAuth</code>, <code className="bg-muted px-1 rounded">requireGuest</code>
               </p>
             </Card>
             <Card className="p-4">
               <h3 className="font-semibold">@repo/db</h3>
               <p className="text-sm text-muted-foreground mt-1">
-                Drizzle ORM with SQLite. Schema: <code className="bg-muted px-1 rounded">todos</code> table (id, title, completed, createdAt)
+                Drizzle ORM with SQLite/Turso. Auth tables + example <code className="bg-muted px-1 rounded">todos</code> table with relations.
+              </p>
+            </Card>
+            <Card className="p-4">
+              <h3 className="font-semibold">@repo/trpc-client</h3>
+              <p className="text-sm text-muted-foreground mt-1">
+                Reusable tRPC client utilities with optimistic update helpers.
               </p>
             </Card>
             <Card className="p-4">
               <h3 className="font-semibold">@repo/ui</h3>
               <p className="text-sm text-muted-foreground mt-1">
-                Shared components: Button, Input, Checkbox, Card, Sonner (toasts)
+                Shadcn components: Button, Input, Checkbox, Card, Sonner (toasts)
               </p>
             </Card>
           </div>
@@ -167,16 +181,16 @@ npm run dev
           <h2 className="text-2xl font-semibold mb-4">Database Schema</h2>
           <Card className="p-4 bg-muted/50">
             <pre className="text-sm overflow-x-auto">
-              <code>{`// packages/db/src/schema.ts
+              <code>{`// packages/db/src/schema/todo.ts
 export const todos = sqliteTable("todos", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   title: text("title").notNull(),
   completed: integer("completed", { mode: "boolean" })
-    .notNull()
-    .default(false),
+    .notNull().default(false),
   createdAt: integer("created_at", { mode: "timestamp" })
-    .notNull()
-    .$defaultFn(() => new Date()),
+    .notNull().$defaultFn(() => new Date()),
+  userId: text("userId").notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
 });`}</code>
             </pre>
           </Card>
@@ -188,6 +202,10 @@ export const todos = sqliteTable("todos", {
           <Card className="p-4">
             <table className="w-full text-sm">
               <tbody className="divide-y divide-border">
+                <tr>
+                  <td className="py-2 font-mono">npm run setup</td>
+                  <td className="py-2 text-muted-foreground">Automated first-time setup</td>
+                </tr>
                 <tr>
                   <td className="py-2 font-mono">npm run dev</td>
                   <td className="py-2 text-muted-foreground">Start all apps in development mode</td>
@@ -201,11 +219,11 @@ export const todos = sqliteTable("todos", {
                   <td className="py-2 text-muted-foreground">Run ESLint across the monorepo</td>
                 </tr>
                 <tr>
-                  <td className="py-2 font-mono">npm run db:push</td>
+                  <td className="py-2 font-mono">npm run db:push -w @repo/db</td>
                   <td className="py-2 text-muted-foreground">Push schema changes to database</td>
                 </tr>
                 <tr>
-                  <td className="py-2 font-mono">npm run db:studio</td>
+                  <td className="py-2 font-mono">npm run db:studio -w @repo/db</td>
                   <td className="py-2 text-muted-foreground">Open Drizzle Studio (database GUI)</td>
                 </tr>
               </tbody>

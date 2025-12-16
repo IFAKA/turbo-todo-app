@@ -338,32 +338,30 @@ export function TodoApp() {
 
 <div>
 
-### 1. Clone & Install
+### 1. Clone & Setup
 
 ```bash
 git clone <repo>
-cd todo-app
-npm install
+cd <project>
+npm run setup
 ```
 
-### 2. Configure Environment
-
-```bash
-cp .env.example .env
-# Edit .env with your values
-```
+This handles:
+- Environment configuration
+- Dependencies installation
+- Database schema push
 
 </div>
 
 <div>
 
-### 3. Push Database Schema
+### 2. Configure OAuth
 
-```bash
-npm run db:push -w @repo/db
-```
+Add GitHub OAuth credentials to `.env`:
+- Create app at github.com/settings/developers
+- Set callback URL: `http://localhost:3000/api/auth/callback/github`
 
-### 4. Start Development
+### 3. Start Development
 
 ```bash
 npm run dev

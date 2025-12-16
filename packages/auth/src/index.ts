@@ -1,18 +1,13 @@
 import NextAuth from "next-auth";
 import GitHub from "next-auth/providers/github";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import { db, users, accounts, sessions, verificationTokens } from "@repo/db";
+import { db } from "@repo/db";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 
 // NextAuth configuration
 export const { handlers, signIn, signOut, auth } = NextAuth({
-  adapter: DrizzleAdapter(db, {
-    usersTable: users,
-    accountsTable: accounts,
-    sessionsTable: sessions,
-    verificationTokensTable: verificationTokens,
-  }),
+  adapter: DrizzleAdapter(db),
   providers: [GitHub],
   session: { strategy: "database" },
   pages: { signIn: "/login" },

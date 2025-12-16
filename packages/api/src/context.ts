@@ -15,7 +15,7 @@ export type Session = {
 export type GetSessionFn = () => Promise<Session>;
 
 export type CreateContextOptions = {
-  getSession?: GetSessionFn;
+  getSession: GetSessionFn;
 };
 
 export async function createContext(

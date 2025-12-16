@@ -63,13 +63,32 @@ apps/web/
 
 ## Quick Start
 
-### 1. Install dependencies
+### Option A: Automated Setup (Recommended)
+
+```bash
+npm run setup
+```
+
+This will:
+- Check Node.js version
+- Create `.env` with correct database path and generated `AUTH_SECRET`
+- Install dependencies
+- Push database schema
+
+Then add your GitHub OAuth credentials to `.env` and run `npm run dev`.
+
+### Option B: Manual Setup
+
+<details>
+<summary>Click to expand manual steps</summary>
+
+#### 1. Install dependencies
 
 ```bash
 npm install
 ```
 
-### 2. Configure environment variables
+#### 2. Configure environment variables
 
 ```bash
 cp .env.example .env
@@ -90,17 +109,19 @@ AUTH_GITHUB_ID="your-client-id"
 AUTH_GITHUB_SECRET="your-client-secret"
 ```
 
-### 3. Push database schema
+#### 3. Push database schema
 
 ```bash
 npm run db:push -w @repo/db
 ```
 
-### 4. Start development
+#### 4. Start development
 
 ```bash
 npm run dev
 ```
+
+</details>
 
 | Port | App |
 |------|-----|
@@ -112,6 +133,7 @@ npm run dev
 
 | Command | Description |
 |---------|-------------|
+| `npm run setup` | Automated first-time setup |
 | `npm run dev` | Start all apps in development mode |
 | `npm run build` | Build all apps and packages |
 | `npm run lint` | Lint all packages |
