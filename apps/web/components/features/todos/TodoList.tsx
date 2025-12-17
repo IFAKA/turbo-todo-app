@@ -4,26 +4,30 @@ import { TodoItem } from "./TodoItem";
 
 interface TodoListProps {
   todos: { id: number; title: string; completed: boolean }[];
-  isLoading: boolean;
-  onToggle: (id: number) => void;
-  onDelete: (id: number) => void;
+  isLoading?: boolean;
+  onToggle: (data: { id: number }) => void;
+  onDelete: (data: { id: number }) => void;
 }
 
 export function TodoList({ todos, isLoading, onToggle, onDelete }: TodoListProps) {
   if (isLoading) {
-    return <p className="text-muted-foreground text-sm">Loading...</p>;
+    return (
+      <p className="text-center text-muted-foreground text-sm py-8">
+        Loading...
+      </p>
+    );
   }
 
   if (todos.length === 0) {
     return (
-      <p className="text-muted-foreground text-sm">
-        No todos yet. Add one above!
+      <p className="text-center text-muted-foreground text-sm py-8">
+        No todos yet
       </p>
     );
   }
 
   return (
-    <div className="space-y-2">
+    <div className="divide-y">
       {todos.map((todo) => (
         <TodoItem
           key={todo.id}

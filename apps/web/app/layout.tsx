@@ -31,14 +31,14 @@ export default function RootLayout({
       <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased h-full flex flex-col`}>
         <TRPCProvider>
           <header className="border-b shrink-0">
-            <div className="container mx-auto flex h-16 items-center justify-between px-4">
-              <Link href={ROUTES.HOME} className="text-lg font-semibold">
+            <div className="container mx-auto flex h-14 items-center justify-between px-4">
+              <Link href={ROUTES.HOME} className="text-sm font-medium">
                 {APP_NAME}
               </Link>
               <UserNav />
             </div>
           </header>
-          <div className="flex-1 flex flex-col">{children}</div>
+          <main className="flex-1 flex flex-col">{children}</main>
         </TRPCProvider>
         <Toaster />
       </body>
