@@ -84,10 +84,10 @@ npm run dev
 │   └── slides/       # Slidev presentation (port 3002)
 │
 └── packages/
-    ├── api/          # tRPC router & procedures
+    ├── api/          # tRPC router, procedures & React client
     ├── auth/         # NextAuth configuration
-    ├── db/           # Drizzle ORM & schema
-    ├── trpc-client/  # Reusable tRPC client utilities
+    ├── db/           # Drizzle ORM schema
+    ├── validators/   # Zod schemas for validation
     ├── ui/           # Shared React components
     ├── typescript-config/
     └── eslint-config/`}</code>
@@ -102,7 +102,7 @@ npm run dev
             <Card className="p-4">
               <h3 className="font-semibold">@repo/api</h3>
               <p className="text-sm text-muted-foreground mt-1">
-                tRPC router with example todo procedures: <code className="bg-muted px-1 rounded">getAll</code>, <code className="bg-muted px-1 rounded">create</code>, <code className="bg-muted px-1 rounded">toggle</code>, <code className="bg-muted px-1 rounded">delete</code>
+                tRPC router + React client with SuperJSON. Procedures: <code className="bg-muted px-1 rounded">getAll</code>, <code className="bg-muted px-1 rounded">create</code>, <code className="bg-muted px-1 rounded">toggle</code>, <code className="bg-muted px-1 rounded">delete</code>
               </p>
             </Card>
             <Card className="p-4">
@@ -114,13 +114,13 @@ npm run dev
             <Card className="p-4">
               <h3 className="font-semibold">@repo/db</h3>
               <p className="text-sm text-muted-foreground mt-1">
-                Drizzle ORM with SQLite/Turso. Auth tables + example <code className="bg-muted px-1 rounded">todos</code> table with relations.
+                Drizzle ORM with SQLite/Turso. Auth tables + example <code className="bg-muted px-1 rounded">todos</code> table.
               </p>
             </Card>
             <Card className="p-4">
-              <h3 className="font-semibold">@repo/trpc-client</h3>
+              <h3 className="font-semibold">@repo/validators</h3>
               <p className="text-sm text-muted-foreground mt-1">
-                Reusable tRPC client utilities with optimistic update helpers.
+                Zod schemas for input validation: <code className="bg-muted px-1 rounded">createTodoSchema</code>, <code className="bg-muted px-1 rounded">toggleTodoSchema</code>, <code className="bg-muted px-1 rounded">deleteTodoSchema</code>
               </p>
             </Card>
             <Card className="p-4">

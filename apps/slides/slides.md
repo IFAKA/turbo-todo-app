@@ -67,10 +67,10 @@ apps/
 └── slides/           → This presentation (port 3002)
 
 packages/
-├── api/              → tRPC routers, procedures, validators
+├── api/              → tRPC routers, procedures & React client
 ├── auth/             → NextAuth configuration
-├── db/               → Drizzle schema, relations, migrations
-├── trpc-client/      → Reusable tRPC client utilities
+├── db/               → Drizzle ORM schema
+├── validators/       → Zod schemas for validation
 ├── ui/               → Shadcn components + Tailwind
 ├── eslint-config/    → Shared ESLint configuration
 └── typescript-config/→ Shared TypeScript configuration
@@ -209,26 +209,22 @@ type NewTodo = typeof todos.$inferInsert;
 
 # Package: @repo/api
 
-tRPC routers with full type safety from database to frontend.
+tRPC routers with SuperJSON for type-safe serialization (Date, Map, Set, etc).
 
 ```ts
 // packages/api/src/routers/todo.ts
 export const todoRouter = router({
-  getAll: protectedProcedure.query(async ({ ctx }) => {
-    return await ctx.db.query.todos.findMany({
-      where: eq(todos.userId, ctx.session.user.id),
-    });
-  }),
+  getAll: protectedProcedure.query(({ ctx: { db, user } }) =>
+    db.select().from(todos)
+      .where(eq(todos.userId, user.id))
+      .orderBy(todos.createdAt)
+  ),
 
   create: protectedProcedure
-    .input(createTodoSchema)  // Zod validation
-    .mutation(async ({ ctx, input }) => {
-      const [todo] = await ctx.db
-        .insert(todos)
-        .values({ ...input, userId: ctx.session.user.id })
-        .returning();
-      return todo;
-    }),
+    .input(createTodoSchema)  // From @repo/validators
+    .mutation(({ ctx: { db, user }, input }) =>
+      db.insert(todos).values({ title: input.title, userId: user.id })
+    ),
 });
 ```
 
@@ -271,29 +267,28 @@ layoutClass: gap-8
 
 # Custom Hooks
 
-Encapsulate data fetching with optimistic updates:
+Encapsulate data fetching with specific invalidation:
 
 ```ts
 // hooks/use-todos.ts
 export function useTodos() {
-  const cache = createListCache(
-    trpc.useUtils().todo.getAll
-  );
+  const utils = trpc.useUtils();
+  const todosQuery = trpc.todo.getAll.useQuery();
+
+  const invalidate = () =>
+    utils.todo.getAll.invalidate();
 
   const createTodo = trpc.todo.create
-    .useMutation(
-      cache.withOptimistic(({ add }) => ({
-        action: (input) => add({
-          ...input,
-          id: -Date.now(),
-          completed: false,
-        }),
-        onError: (err) =>
-          toast.error(err.message),
-      }))
-    );
+    .useMutation({
+      onSuccess: invalidate,
+      onError: (err) =>
+        toast.error(err.message),
+    });
 
-  return { todos, create, toggle, delete };
+  return {
+    todos: todosQuery.data ?? [],
+    create: createTodo.mutate,
+  };
 }
 ```
 
@@ -387,16 +382,15 @@ Visit http://localhost:3000
 export const notes = sqliteTable("notes", {
   id: integer("id").primaryKey(),
   title: text("title").notNull(),
-  content: text("content"),
+  userId: text("userId").notNull(),
 });
 ```
 
-### 2. tRPC Router
+### 2. Validators
 ```ts
-// packages/api/src/routers/note.ts
-export const noteRouter = router({
-  getAll: protectedProcedure.query(...),
-  create: protectedProcedure.mutation(...),
+// packages/validators/src/note.ts
+export const createNoteSchema = z.object({
+  title: z.string().min(1),
 });
 ```
 
@@ -404,23 +398,21 @@ export const noteRouter = router({
 
 <div>
 
-### 3. Feature Components
-```
-components/features/notes/
-├── NoteApp.tsx
-├── NoteForm.tsx
-├── NoteItem.tsx
-└── index.ts
-```
-
-### 4. Custom Hook
+### 3. tRPC Router
 ```ts
-// hooks/use-notes.ts
-export function useNotes() { ... }
+// packages/api/src/routers/note.ts
+export const noteRouter = router({
+  getAll: protectedProcedure.query(...),
+  create: protectedProcedure
+    .input(createNoteSchema)
+    .mutation(...),
+});
 ```
 
-### 5. Route
+### 4. Custom Hook + Components
 ```
+hooks/use-notes.ts
+components/features/notes/
 app/(protected)/notes/page.tsx
 ```
 
