@@ -1,3 +1,5 @@
+export const TRPC_ENDPOINT = "/api/trpc";
+
 type UrlConfig = {
   defaultPort?: number;
 };

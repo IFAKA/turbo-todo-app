@@ -19,7 +19,7 @@ export async function UserNav() {
   return (
     <div className="flex items-center gap-4">
       <div className="flex items-center gap-2">
-        {session.user.image && (
+        {session.user?.image && (
           <img
             src={session.user.image}
             alt={session.user.name ?? "User"}
@@ -27,7 +27,7 @@ export async function UserNav() {
           />
         )}
         <span className="text-sm text-muted-foreground">
-          {session.user.name ?? session.user.email}
+          {session.user?.name ?? session.user?.email}
         </span>
       </div>
       <form

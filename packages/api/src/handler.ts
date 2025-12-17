@@ -1,14 +1,15 @@
-import { createTRPCHandler } from "@repo/trpc-client/handler";
+import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { appRouter } from "./root";
-import { createContext, type GetSessionFn } from "./context";
+import { createContext } from "./context";
+import { TRPC_ENDPOINT } from "./utils/url";
 
-type HandlerOptions = {
-  getSession: GetSessionFn;
-};
-
-export function createAppHandler(opts: HandlerOptions) {
-  return createTRPCHandler({
+const handler = (req: Request) =>
+  fetchRequestHandler({
+    endpoint: TRPC_ENDPOINT,
     router: appRouter,
-    createContext: (fetchOpts) => createContext(fetchOpts, { getSession: opts.getSession }),
+    createContext,
+    req,
   });
-}
+
+export const GET = handler;
+export const POST = handler;

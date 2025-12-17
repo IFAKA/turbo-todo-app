@@ -1,35 +1,26 @@
-import { trpc } from "@repo/api/client";
-import { createListCache } from "@repo/trpc-client/optimistic";
+import { trpc } from "@repo/api/react";
 import { toast } from "@repo/ui/sonner";
 
 export function useTodos() {
-  const cache = createListCache(trpc.useUtils().todo.getAll);
+  const utils = trpc.useUtils();
   const todosQuery = trpc.todo.getAll.useQuery();
 
-  const createTodo = trpc.todo.create.useMutation(
-    cache.withOptimistic(({ add }) => ({
-      // userId is placeholder - server will use actual userId from session
-      action: (input) => add({ ...input, completed: false, createdAt: new Date().toISOString(), userId: "" }),
-      onError: (err) => toast.error("Failed to create todo", { description: err.message }),
-    }))
-  );
+  const invalidateTodos = () => utils.todo.getAll.invalidate();
 
-  const toggleTodo = trpc.todo.toggle.useMutation(
-    cache.withOptimistic(({ get, update }) => ({
-      action: ({ id }) => {
-        const todo = get().find((t) => t.id === id);
-        if (todo) update(id, { completed: !todo.completed });
-      },
-      onError: (err) => toast.error("Failed to update todo", { description: err.message }),
-    }))
-  );
+  const createTodo = trpc.todo.create.useMutation({
+    onSuccess: invalidateTodos,
+    onError: (err) => toast.error("Failed to create todo", { description: err.message }),
+  });
 
-  const deleteTodo = trpc.todo.delete.useMutation(
-    cache.withOptimistic(({ remove }) => ({
-      action: ({ id }) => remove(id),
-      onError: (err) => toast.error("Failed to delete todo", { description: err.message }),
-    }))
-  );
+  const toggleTodo = trpc.todo.toggle.useMutation({
+    onSuccess: invalidateTodos,
+    onError: (err) => toast.error("Failed to update todo", { description: err.message }),
+  });
+
+  const deleteTodo = trpc.todo.delete.useMutation({
+    onSuccess: invalidateTodos,
+    onError: (err) => toast.error("Failed to delete todo", { description: err.message }),
+  });
 
   return {
     todos: todosQuery.data ?? [],

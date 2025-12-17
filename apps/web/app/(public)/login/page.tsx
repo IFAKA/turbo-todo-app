@@ -2,7 +2,7 @@ import { requireGuest, signIn } from "@repo/auth";
 import { APP_NAME, ROUTES } from "@/lib/constants";
 
 export default async function LoginPage() {
-  await requireGuest();
+  await requireGuest(ROUTES.DASHBOARD);
 
   return (
     <main className="flex flex-1 flex-col items-center justify-center p-8">
