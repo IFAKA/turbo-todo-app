@@ -1,9 +1,9 @@
+import { relations } from "drizzle-orm";
 import { sqliteTable, text, integer, primaryKey } from "drizzle-orm/sqlite-core";
+import { todos } from "./todo";
 
 export const users = sqliteTable("user", {
-  id: text("id")
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
   name: text("name"),
   email: text("email").unique(),
   emailVerified: integer("emailVerified", { mode: "timestamp" }),
@@ -13,9 +13,7 @@ export const users = sqliteTable("user", {
 export const accounts = sqliteTable(
   "account",
   {
-    userId: text("userId")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
+    userId: text("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
     type: text("type").notNull(),
     provider: text("provider").notNull(),
     providerAccountId: text("providerAccountId").notNull(),
@@ -27,18 +25,12 @@ export const accounts = sqliteTable(
     id_token: text("id_token"),
     session_state: text("session_state"),
   },
-  (account) => [
-    primaryKey({
-      columns: [account.provider, account.providerAccountId],
-    }),
-  ]
+  (account) => [primaryKey({ columns: [account.provider, account.providerAccountId] })]
 );
 
 export const sessions = sqliteTable("session", {
   sessionToken: text("sessionToken").primaryKey(),
-  userId: text("userId")
-    .notNull()
-    .references(() => users.id, { onDelete: "cascade" }),
+  userId: text("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
   expires: integer("expires", { mode: "timestamp" }).notNull(),
 });
 
@@ -49,10 +41,21 @@ export const verificationTokens = sqliteTable(
     token: text("token").notNull(),
     expires: integer("expires", { mode: "timestamp" }).notNull(),
   },
-  (vt) => [
-    primaryKey({ columns: [vt.identifier, vt.token] }),
-  ]
+  (vt) => [primaryKey({ columns: [vt.identifier, vt.token] })]
 );
 
-export type User = typeof users.$inferSelect;
-export type NewUser = typeof users.$inferInsert;
+// Relations
+
+export const usersRelations = relations(users, ({ many }) => ({
+  accounts: many(accounts),
+  sessions: many(sessions),
+  todos: many(todos),
+}));
+
+export const accountsRelations = relations(accounts, ({ one }) => ({
+  user: one(users, { fields: [accounts.userId], references: [users.id] }),
+}));
+
+export const sessionsRelations = relations(sessions, ({ one }) => ({
+  user: one(users, { fields: [sessions.userId], references: [users.id] }),
+}));

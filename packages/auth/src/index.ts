@@ -5,7 +5,6 @@ import { db } from "@repo/db";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 
-// NextAuth configuration
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: DrizzleAdapter(db),
   providers: [GitHub],
@@ -19,39 +18,29 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
 });
 
-// Re-export handlers for route.ts
 export const { GET, POST } = handlers;
 
-// ============================================
-// Helper functions for simple intent coding
-// ============================================
-
 /**
- * Get current session (cached per request)
- * Use in Server Components to check auth status
+ * Get current session
+ *
+ * Wrapped in cache() to deduplicate calls within a single request.
+ * Multiple components calling getSession() will only hit the database once.
  */
-export const getSession = cache(async () => {
-  return await auth();
-});
+export const getSession = cache(auth);
 
-/**
- * Require authentication - redirects to /login if not authenticated
- * Use in protected layouts/pages
- */
-export async function requireAuth() {
+export async function requireAuth(redirectTo: string) {
   const session = await getSession();
-  if (!session) redirect("/login");
+  if (!session) redirect(redirectTo);
   return session;
 }
 
-/**
- * Require guest - redirects to /dashboard if already authenticated
- * Use in login/signup pages
- */
-export async function requireGuest() {
+export async function requireGuest(redirectTo: string) {
   const session = await getSession();
-  if (session) redirect("/dashboard");
+  if (session) redirect(redirectTo);
 }
 
-// Re-export types
+/**
+ * Use when you need explicit session typing for function parameters or props.
+ * Usually not needed since getSession() return type is inferred.
+ */
 export type { Session } from "next-auth";

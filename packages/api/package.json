@@ -7,23 +7,23 @@
     "build": "tsc"
   },
   "exports": {
-    ".": "./src/root.ts",
-    "./client": "./src/client.tsx",
-    "./handler": "./src/handler.ts",
-    "./validators": "./src/validators/index.ts"
+    ".": "./src/index.ts",
+    "./react": "./src/react.tsx",
+    "./handler": "./src/handler.ts"
   },
   "devDependencies": {
     "@repo/typescript-config": "*",
     "typescript": "latest"
   },
   "dependencies": {
+    "@repo/auth": "*",
     "@repo/db": "*",
-    "@repo/trpc-client": "*",
+    "@repo/validators": "*",
     "@tanstack/react-query": "^5.90.12",
     "@trpc/client": "^11.0.0",
-    "@trpc/next": "^11.0.0",
     "@trpc/react-query": "^11.0.0",
     "@trpc/server": "^11.0.0",
+    "drizzle-orm": "^0.38.3",
     "zod": "^3.24.1"
   },
   "peerDependencies": {

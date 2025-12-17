@@ -2,7 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { createTodoSchema, type CreateTodoInput } from "@repo/api/validators";
+import { createTodoSchema, type CreateTodoInput } from "@repo/validators";
 import { Button } from "@repo/ui/button";
 import { Input } from "@repo/ui/input";
 

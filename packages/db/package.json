@@ -8,9 +8,7 @@
     "db:studio": "drizzle-kit studio"
   },
   "exports": {
-    ".": "./src/index.ts",
-    "./schema": "./src/schema/index.ts",
-    "./relations": "./src/relations/index.ts"
+    ".": "./src/index.ts"
   },
   "dependencies": {
     "@libsql/client": "^0.14.0",

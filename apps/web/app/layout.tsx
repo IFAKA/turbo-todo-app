@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import Link from "next/link";
 import { Toaster } from "@repo/ui/sonner";
-import { TRPCProvider } from "@repo/api/client";
+import { TRPCProvider } from "@repo/api/react";
 import { UserNav } from "@/components/layout";
 import { APP_NAME, APP_DESCRIPTION, ROUTES } from "@/lib/constants";
 import "./globals.css";
