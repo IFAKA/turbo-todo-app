@@ -8,7 +8,7 @@ A production-ready monorepo template with Next.js, tRPC, Drizzle ORM, and NextAu
 - **API**: tRPC v11 with React Query
 - **Database**: Drizzle ORM + SQLite/Turso
 - **Auth**: NextAuth v5 (GitHub OAuth)
-- **UI**: Tailwind CSS + Shadcn components
+- **UI**: Tailwind CSS v4 + Shadcn components
 - **Monorepo**: Turborepo with npm workspaces
 
 ## Project Structure
@@ -20,11 +20,11 @@ apps/
 └── slides/           → Slidev presentation (port 3002)
 
 packages/
-├── api/              → tRPC routers, procedures, validators
+├── api/              → tRPC routers, procedures & React client
 ├── auth/             → NextAuth configuration and helpers
 ├── db/               → Drizzle schema, relations, migrations
-├── trpc-client/      → Reusable tRPC client utilities
-├── ui/               → Shadcn components + Tailwind config
+├── validators/       → Zod schemas for input validation
+├── ui/               → Shadcn components (Tailwind CSS v4)
 ├── eslint-config/    → Shared ESLint configuration
 └── typescript-config/→ Shared TypeScript configuration
 ```
@@ -180,7 +180,7 @@ Update the package.json:
 
 ### Adding a new tRPC router
 
-1. Create validator in `packages/api/src/validators/`
+1. Create validator in `packages/validators/src/`
 2. Create router in `packages/api/src/routers/`
 3. Add to root router in `packages/api/src/root.ts`
 
@@ -204,8 +204,7 @@ import { Todo, NewTodo } from "@repo/db/schema";
 
 ```typescript
 import { appRouter, type AppRouter } from "@repo/api";
-import { TRPCProvider } from "@repo/api/client";
-import { createContext } from "@repo/api/context";
+import { TRPCProvider, trpc } from "@repo/api/react";
 ```
 
 ### @repo/auth
@@ -214,11 +213,10 @@ import { createContext } from "@repo/api/context";
 import { auth, getSession, requireAuth, requireGuest } from "@repo/auth";
 ```
 
-### @repo/trpc-client
+### @repo/validators
 
 ```typescript
-import { createTRPCReactClient } from "@repo/trpc-client/react";
-import { createListCache } from "@repo/trpc-client/optimistic";
+import { createTodoSchema, toggleTodoSchema, deleteTodoSchema } from "@repo/validators";
 ```
 
 ### @repo/ui
